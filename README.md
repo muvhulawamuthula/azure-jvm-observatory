@@ -86,6 +86,7 @@ This platform goes beyond standard Spring Boot monitoring by introducing control
 * Detects thread spikes
 * Emits JVM heartbeat logs
 * Writes JVM ALERT warnings to Azure logs
+* Configurable alert thresholds (see [Configuration](#configuration))
 
 ### Observability Stack
 
@@ -166,6 +167,19 @@ export STRESS_LAB_KEY=choose-a-strong-secret
 az containerapp update -n <app> -g <rg> \
   --set-env-vars STRESS_LAB_KEY=secretref:stress-lab-key
 ```
+
+---
+
+## Configuration
+
+The `JvmHealthWatcher` alert thresholds are externalized so they can be tuned
+without a rebuild (via `application.properties` or the matching environment
+variables):
+
+| Property | Env var | Default | Description |
+| --- | --- | --- | --- |
+| `observatory.health.heap-alert-threshold-percent` | `OBSERVATORY_HEALTH_HEAP_ALERT_THRESHOLD_PERCENT` | `80` | Logs a JVM ALERT when heap usage exceeds this percentage |
+| `observatory.health.thread-alert-threshold` | `OBSERVATORY_HEALTH_THREAD_ALERT_THRESHOLD` | `200` | Logs a JVM ALERT when the live thread count exceeds this value |
 
 ---
 

@@ -2,6 +2,7 @@ package com.muvhulawa.observatory.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,16 @@ public class JvmHealthWatcher {
 
     private static final Logger log = LoggerFactory.getLogger(JvmHealthWatcher.class);
 
+    private final double heapAlertThresholdPercent;
+    private final int threadAlertThreshold;
+
+    public JvmHealthWatcher(
+            @Value("${observatory.health.heap-alert-threshold-percent:80}") double heapAlertThresholdPercent,
+            @Value("${observatory.health.thread-alert-threshold:200}") int threadAlertThreshold) {
+        this.heapAlertThresholdPercent = heapAlertThresholdPercent;
+        this.threadAlertThreshold = threadAlertThreshold;
+    }
+
     @Scheduled(fixedRate = 15000)
     public void watchJvm() {
         MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
@@ -25,11 +36,11 @@ public class JvmHealthWatcher {
         double usage = heapUsagePercent(used, max);
         int threadCount = threads.getThreadCount();
 
-        if (usage > 80) {
+        if (usage > heapAlertThresholdPercent) {
             log.warn("⚠ JVM ALERT: Heap pressure critical: {}%", String.format("%.2f", usage));
         }
 
-        if (threadCount > 200) {
+        if (threadCount > threadAlertThreshold) {
             log.warn("⚠ JVM ALERT: Thread spike detected: {}", threadCount);
         }
 
