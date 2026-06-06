@@ -183,6 +183,24 @@ variables):
 
 ---
 
+## Testing
+
+Run the suite with:
+
+```bash
+./mvnw test
+```
+
+Coverage:
+
+| Test | What it verifies |
+| --- | --- |
+| `AzureJvmObservatoryApplicationTests` | Spring context boots |
+| `JvmHealthWatcherTest` | Heap-usage math, the `getMax() == -1` fail-safe guard, and locale-independent (`.` separator) percentage formatting |
+| `StressLabKeyFilterTest` | The `X-Stress-Key` gate: rejects missing/wrong keys, fails closed when no key is configured, allows the correct key, and leaves non-stress endpoints open |
+
+---
+
 ## Example Kusto Queries
 
 ### JVM Alerts
