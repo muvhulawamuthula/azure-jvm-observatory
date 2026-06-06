@@ -218,13 +218,13 @@ Create an app registration with a federated credential for this repo (subject
 **least-privilege** roles the deploy needs — avoid `Contributor`:
 
 * **`AcrPush`** scoped to the container registry — to push the image.
-* A **custom role** scoped to the resource group with only these actions — to update the Container App:
-  * `Microsoft.App/containerApps/read`
-  * `Microsoft.App/containerApps/write`
-  * `Microsoft.App/managedEnvironments/read`
-  * `Microsoft.ContainerRegistry/registries/read`
+* A **custom role** with only these three actions, assigned at the narrowest scopes (not the resource group):
+  * `Microsoft.App/containerApps/read` and `…/write` — assigned on the **Container App** resource, to update it.
+  * `Microsoft.ContainerRegistry/registries/read` — assigned on the **registry** resource, so `az acr login` can resolve it (`AcrPush` alone does not grant this).
 
-See the [Azure OIDC login docs](https://github.com/Azure/login#login-with-openid-connect-oidc-recommended)
+This keeps a compromised CI credential limited to this one Container App and this one
+registry, rather than the whole resource group. See the
+[Azure OIDC login docs](https://github.com/Azure/login#login-with-openid-connect-oidc-recommended)
 and [custom roles](https://learn.microsoft.com/azure/role-based-access-control/custom-roles).
 
 ### Required GitHub configuration
