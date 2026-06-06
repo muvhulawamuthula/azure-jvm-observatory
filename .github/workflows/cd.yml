@@ -46,12 +46,13 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Build and push image to ACR
+        # Build on the runner and push, rather than az acr build, because ACR
+        # Tasks is not available in this registry's region (South Africa North).
         run: |
-          az acr build \
-            --registry "${{ vars.ACR_NAME }}" \
-            --image "${IMAGE_NAME}:${{ steps.tag.outputs.value }}" \
-            --file Dockerfile \
-            .
+          IMAGE="${{ vars.ACR_NAME }}.azurecr.io/${IMAGE_NAME}:${{ steps.tag.outputs.value }}"
+          az acr login --name "${{ vars.ACR_NAME }}"
+          docker build -t "$IMAGE" -f Dockerfile .
+          docker push "$IMAGE"
 
       - name: Deploy to Azure Container Apps
         run: |
