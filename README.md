@@ -277,3 +277,9 @@ This project demonstrates advanced engineering capability in:
 ## Portfolio Summary
 
 **Azure JVM Performance Observatory** is a self-diagnosing JVM observability platform capable of stress simulation, JVM telemetry collection, anomaly detection, cloud-native monitoring, log analytics, and production alerting on Microsoft Azure.
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE).
