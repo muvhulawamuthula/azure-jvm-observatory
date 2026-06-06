@@ -22,9 +22,7 @@ public class JvmHealthWatcher {
         long used = memory.getHeapMemoryUsage().getUsed();
         long max = memory.getHeapMemoryUsage().getMax();
 
-        // getMax() returns -1 when no heap maximum is defined; guard against
-        // negative/zero so heap-pressure detection can't be silently disabled.
-        double usage = max > 0 ? ((double) used / max) * 100 : -1;
+        double usage = heapUsagePercent(used, max);
         int threadCount = threads.getThreadCount();
 
         if (usage > 80) {
@@ -38,5 +36,19 @@ public class JvmHealthWatcher {
         log.info("JVM heartbeat | heap={}%, threads={}",
                 String.format("%.2f", usage),
                 threadCount);
+    }
+
+    /**
+     * Computes heap usage as a percentage of the configured maximum.
+     *
+     * <p>{@link java.lang.management.MemoryUsage#getMax()} returns -1 when no
+     * heap maximum is defined. Guarding against a non-positive max keeps the
+     * calculation from producing a negative percentage that would silently
+     * disable heap-pressure detection.
+     *
+     * @return the usage percentage, or -1 when no heap maximum is defined
+     */
+    static double heapUsagePercent(long used, long max) {
+        return max > 0 ? ((double) used / max) * 100 : -1;
     }
 }
