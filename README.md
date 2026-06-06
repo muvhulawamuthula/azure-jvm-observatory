@@ -1,5 +1,7 @@
 # 🚀 Azure JVM Performance Observatory
 
+[![CI](https://github.com/muvhulawamuthula/azure-jvm-observatory/actions/workflows/ci.yml/badge.svg)](https://github.com/muvhulawamuthula/azure-jvm-observatory/actions/workflows/ci.yml)
+
 > A cloud-native self-diagnosing JVM observability platform built with Java 21, Spring Boot, Docker, and Microsoft Azure.
 
 ## Architecture Overview
