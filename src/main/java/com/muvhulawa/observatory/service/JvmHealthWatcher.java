@@ -38,16 +38,23 @@ public class JvmHealthWatcher {
         int threadCount = threads.getThreadCount();
 
         if (usage > heapAlertThresholdPercent) {
-            log.warn("⚠ JVM ALERT: Heap pressure critical: {}%", String.format(Locale.ROOT, "%.2f", usage));
+            log.warn("⚠ JVM ALERT: Heap pressure critical: {}%", formatPercent(usage));
         }
 
         if (threadCount > threadAlertThreshold) {
             log.warn("⚠ JVM ALERT: Thread spike detected: {}", threadCount);
         }
 
-        log.info("JVM heartbeat | heap={}%, threads={}",
-                String.format(Locale.ROOT, "%.2f", usage),
-                threadCount);
+        log.info("JVM heartbeat | heap={}%, threads={}", formatPercent(usage), threadCount);
+    }
+
+    /**
+     * Formats a percentage with two decimals using a fixed locale, so the
+     * decimal separator is always a dot (e.g. {@code 2.33}) regardless of the
+     * host's default locale. This keeps the logged values reliably parseable.
+     */
+    static String formatPercent(double usage) {
+        return String.format(Locale.ROOT, "%.2f", usage);
     }
 
     /**
