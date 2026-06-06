@@ -22,7 +22,9 @@ public class JvmHealthWatcher {
         long used = memory.getHeapMemoryUsage().getUsed();
         long max = memory.getHeapMemoryUsage().getMax();
 
-        double usage = ((double) used / max) * 100;
+        // getMax() returns -1 when no heap maximum is defined; guard against
+        // negative/zero so heap-pressure detection can't be silently disabled.
+        double usage = max > 0 ? ((double) used / max) * 100 : -1;
         int threadCount = threads.getThreadCount();
 
         if (usage > 80) {
