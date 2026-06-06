@@ -206,7 +206,9 @@ Coverage:
 ## Deployment (CI/CD)
 
 * **CI** (`.github/workflows/ci.yml`) runs `./mvnw clean verify` on every push and pull request to `main`.
-* **CD** (`.github/workflows/cd.yml`) is **manual** (`workflow_dispatch`): it builds the image with `az acr build`, pushes it to Azure Container Registry, and updates the Azure Container App. It authenticates with **OIDC federated credentials** (no long-lived secret stored in GitHub).
+* **CD** (`.github/workflows/cd.yml`) is **manual** (`workflow_dispatch`): it builds the image on the runner with Docker, pushes it to Azure Container Registry (`az acr login` + `docker push`), and updates the Azure Container App. It authenticates with **OIDC federated credentials** (no long-lived secret stored in GitHub).
+
+  > The image is built on the runner rather than with `az acr build` because ACR Tasks is not available in every region (including South Africa North, where this registry lives).
 
 ### One-time Azure setup
 
