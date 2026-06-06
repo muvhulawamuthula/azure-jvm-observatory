@@ -63,6 +63,17 @@
             overflow-x: auto;
             color: #a7f3d0;
         }
+
+        input.key {
+            background: #020617;
+            color: #e5e7eb;
+            border: 1px solid #1f2937;
+            border-radius: 10px;
+            padding: 11px 14px;
+            margin: 6px 8px 6px 0;
+            font-weight: bold;
+            min-width: 240px;
+        }
     </style>
 </head>
 <body>
@@ -95,6 +106,11 @@
 <div class="card" style="margin-top: 25px;">
     <h2>Stress Lab Controls</h2>
 
+    <p>Destructive endpoints require an API key (sent as the <code>X-Stress-Key</code> header).</p>
+    <input type="password" class="key" id="stressKey" placeholder="X-Stress-Key" oninput="saveKey()">
+
+    <br>
+
     <button onclick="post('/api/load/cpu?seconds=20')">Burn CPU 20s</button>
     <button class="danger" onclick="post('/api/load/memory-leak?megabytes=100')">Leak 100MB</button>
     <button class="warning" onclick="post('/api/load/memory-clear')">Clear Memory</button>
@@ -124,13 +140,26 @@
         }
     }
 
+    function saveKey() {
+        sessionStorage.setItem('stressKey', document.getElementById('stressKey').value);
+    }
+
+    function loadKey() {
+        document.getElementById('stressKey').value = sessionStorage.getItem('stressKey') || '';
+    }
+
     async function post(path) {
-        const response = await fetch(path, { method: 'POST' });
+        const key = sessionStorage.getItem('stressKey') || '';
+        const response = await fetch(path, {
+            method: 'POST',
+            headers: { 'X-Stress-Key': key }
+        });
         const text = await response.text();
-        alert(text);
+        alert(response.ok ? text : 'Request failed (' + response.status + '): ' + text);
         loadMetrics();
     }
 
+    loadKey();
     loadMetrics();
     setInterval(loadMetrics, 3000);
 </script>

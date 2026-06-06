@@ -124,13 +124,48 @@ This platform goes beyond standard Spring Boot monitoring by introducing control
 * `GET /actuator/health`
 * `GET /actuator/prometheus`
 
-### Stress Lab
+### Stress Lab (protected)
+
+These endpoints are destructive and require the `X-Stress-Key` header (see [Security](#security)):
 
 * `POST /api/load/cpu?seconds=20`
 * `POST /api/load/memory-leak?megabytes=100`
 * `POST /api/load/memory-clear`
 * `POST /api/load/virtual-threads?count=1000`
 * `POST /api/load/platform-threads?count=100`
+
+```bash
+curl -X POST -H "X-Stress-Key: $STRESS_LAB_KEY" \
+  "http://localhost:8080/api/load/cpu?seconds=20"
+```
+
+---
+
+## Security
+
+The stress-lab endpoints can intentionally exhaust JVM resources, so they are
+locked behind a shared API key:
+
+* Every `POST /api/load/**` request must send the secret in the `X-Stress-Key` header.
+* The key is read from the `STRESS_LAB_KEY` environment variable.
+* The check **fails closed**: if `STRESS_LAB_KEY` is unset, the stress lab is locked
+  entirely (every request returns `401`), so a misconfigured deployment is safe by default.
+* Keys are compared in constant time to avoid timing side-channels.
+* The live metrics API, Prometheus endpoint, and dashboard remain open.
+
+Actuator exposure is limited to `health,info,metrics,prometheus`; the `heapdump`
+and `threaddump` endpoints are deliberately **not** exposed.
+
+Set the key locally or on Azure Container Apps:
+
+```bash
+# Local
+export STRESS_LAB_KEY=choose-a-strong-secret
+
+# Azure Container Apps
+az containerapp update -n <app> -g <rg> \
+  --set-env-vars STRESS_LAB_KEY=secretref:stress-lab-key
+```
 
 ---
 
