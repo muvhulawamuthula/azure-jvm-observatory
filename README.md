@@ -228,6 +228,36 @@ requests
 
 ---
 
+## Contributing
+
+Contributions are welcome. To get set up:
+
+1. **Prerequisites:** JDK 21 and the bundled Maven wrapper (`./mvnw`). Docker is
+   optional, only needed to build/run the container image.
+2. **Build and test:**
+
+   ```bash
+   ./mvnw clean verify
+   ```
+
+3. **Run locally** (the stress lab is locked unless a key is set — see [Security](#security)):
+
+   ```bash
+   STRESS_LAB_KEY=choose-a-strong-secret ./mvnw spring-boot:run
+   ```
+
+   The dashboard is then served at <http://localhost:8080/>.
+
+### Guidelines
+
+* Branch off `main` and open a pull request; keep changes focused and explain the *why* in the description.
+* **Add or update tests** for any behavior change — see [Testing](#testing). All tests must pass before review.
+* Keep new tunables externalized to configuration rather than hardcoded (follow the [Configuration](#configuration) pattern).
+* Never commit secrets. The stress-lab key is supplied at runtime via `STRESS_LAB_KEY`.
+* Match the existing code style and keep commits descriptive.
+
+---
+
 ## What This Demonstrates
 
 This project demonstrates advanced engineering capability in:
