@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.ThreadMXBean;
+import java.util.Locale;
 
 @Component
 public class JvmHealthWatcher {
@@ -37,7 +38,7 @@ public class JvmHealthWatcher {
         int threadCount = threads.getThreadCount();
 
         if (usage > heapAlertThresholdPercent) {
-            log.warn("⚠ JVM ALERT: Heap pressure critical: {}%", String.format("%.2f", usage));
+            log.warn("⚠ JVM ALERT: Heap pressure critical: {}%", String.format(Locale.ROOT, "%.2f", usage));
         }
 
         if (threadCount > threadAlertThreshold) {
@@ -45,7 +46,7 @@ public class JvmHealthWatcher {
         }
 
         log.info("JVM heartbeat | heap={}%, threads={}",
-                String.format("%.2f", usage),
+                String.format(Locale.ROOT, "%.2f", usage),
                 threadCount);
     }
 
