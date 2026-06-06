@@ -203,6 +203,34 @@ Coverage:
 
 ---
 
+## Deployment (CI/CD)
+
+* **CI** (`.github/workflows/ci.yml`) runs `./mvnw clean verify` on every push and pull request to `main`.
+* **CD** (`.github/workflows/cd.yml`) is **manual** (`workflow_dispatch`): it builds the image with `az acr build`, pushes it to Azure Container Registry, and updates the Azure Container App. It authenticates with **OIDC federated credentials** (no long-lived secret stored in GitHub).
+
+### One-time Azure setup
+
+Create an app registration with a federated credential for this repo and grant it
+access to the resource group (e.g. `Contributor` + `AcrPush`). See the
+[Azure OIDC login docs](https://github.com/Azure/login#login-with-openid-connect-oidc-recommended).
+
+### Required GitHub configuration
+
+| Type | Name | Description |
+| --- | --- | --- |
+| Secret | `AZURE_CLIENT_ID` | App registration (client) ID used for OIDC login |
+| Secret | `AZURE_TENANT_ID` | Azure AD tenant ID |
+| Secret | `AZURE_SUBSCRIPTION_ID` | Target subscription ID |
+| Variable | `ACR_NAME` | Azure Container Registry name (without `.azurecr.io`) |
+| Variable | `RESOURCE_GROUP` | Resource group of the Container App |
+| Variable | `CONTAINER_APP_NAME` | Target Azure Container App name |
+
+Trigger a deploy from the **Actions → CD → Run workflow** button (optionally
+overriding the image tag). Remember to set the `STRESS_LAB_KEY` secret on the
+Container App itself — see [Security](#security).
+
+---
+
 ## Example Kusto Queries
 
 ### JVM Alerts
