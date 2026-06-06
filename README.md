@@ -199,7 +199,8 @@ Coverage:
 | --- | --- |
 | `AzureJvmObservatoryApplicationTests` | Spring context boots |
 | `JvmHealthWatcherTest` | Heap-usage math, the `getMax() == -1` fail-safe guard, and locale-independent (`.` separator) percentage formatting |
-| `StressLabKeyFilterTest` | The `X-Stress-Key` gate: rejects missing/wrong keys, fails closed when no key is configured, allows the correct key, and leaves non-stress endpoints open |
+| `StressLabKeyFilterTest` | The `X-Stress-Key` gate in isolation: rejects missing/wrong keys, fails closed when no key is configured, allows the correct key, and leaves non-stress endpoints open |
+| `StressLabSecurityIntegrationTest` | The gate end-to-end through the live servlet chain (MockMvc): `/api/load/**` returns 401 without/with a wrong key and 200 with the correct key, while `/api/metrics/jvm` stays open |
 
 ---
 
