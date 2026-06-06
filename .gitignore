@@ -34,6 +34,10 @@ build/
 # Env / secrets
 .env
 
+# Build / runtime logs
+*.log
+logs/
+
 # OS junk
 .DS_Store
 Thumbs.db
