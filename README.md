@@ -212,9 +212,19 @@ Coverage:
 
 ### One-time Azure setup
 
-Create an app registration with a federated credential for this repo and grant it
-access to the resource group (e.g. `Contributor` + `AcrPush`). See the
-[Azure OIDC login docs](https://github.com/Azure/login#login-with-openid-connect-oidc-recommended).
+Create an app registration with a federated credential for this repo (subject
+`repo:<owner>/<repo>:ref:refs/heads/main`) and grant its service principal the
+**least-privilege** roles the deploy needs — avoid `Contributor`:
+
+* **`AcrPush`** scoped to the container registry — to push the image.
+* A **custom role** scoped to the resource group with only these actions — to update the Container App:
+  * `Microsoft.App/containerApps/read`
+  * `Microsoft.App/containerApps/write`
+  * `Microsoft.App/managedEnvironments/read`
+  * `Microsoft.ContainerRegistry/registries/read`
+
+See the [Azure OIDC login docs](https://github.com/Azure/login#login-with-openid-connect-oidc-recommended)
+and [custom roles](https://learn.microsoft.com/azure/role-based-access-control/custom-roles).
 
 ### Required GitHub configuration
 
